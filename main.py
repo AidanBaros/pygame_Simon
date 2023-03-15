@@ -2,6 +2,7 @@ import pygame
 from math import pi, sin, cos, sqrt
 import numpy
 import random
+import winsound
 
 def p_2_c(theta,radus):
     x = radus * cos(theta)
@@ -45,7 +46,10 @@ def main():
     yellow_points = point_gen(3*pi/2, 2*pi,200,400,steps,screen_size)
 
     sequence = []
-    sequence.append(random.randint(0,4))
+    sequence.append(random.randint(0,3))
+    should_display = True
+    click = False
+    sequence_pos = 0
 
     while not gameover:
         clock.tick(60)
@@ -55,21 +59,89 @@ def main():
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LCTRL] or keys[pygame.K_ESCAPE]:
                 gameover = True
+            if pygame.mouse.get_pressed(num_buttons=3)[0] == True:
+                click = True
+            else:
+                click = False
 
-        for i, choice in enumerate(sequence):
-            screen.fill("black")
-            pygame.draw.polygon(screen,RED,red_points,0)
-            pygame.draw.polygon(screen,BLUE,blue_points,0)
-            pygame.draw.polygon(screen,GREEN,green_points,0)
-            pygame.draw.polygon(screen,YELLOW,yellow_points,0)
-            if choice == 0:
-                pygame.draw.polygon(screen,WHITE,red_points,0)
-            elif choice == 1:
-                pygame.draw.polygon(screen,WHITE,blue_points,0)
-            elif choice == 2:
-                pygame.draw.polygon(screen,WHITE,green_points,0)
-            elif choice == 3:
-                pygame.draw.polygon(screen,WHITE,yellow_points,0)
+        if not should_display:
+            mouse_pos = pygame.mouse.get_pos()
+            distance = distance_formula(screen_size[0]//2, screen_size[1]//2,mouse_pos[0],mouse_pos[1])
+            if distance <= 400 and distance >= 200 and click == True:
+                if mouse_pos[0] >= screen_size[0]//2 and mouse_pos[1] >= screen_size[1]//2:
+                    if sequence[sequence_pos] == 0:
+                        sequence_pos += 1
+                        pygame.draw.polygon(screen,WHITE,red_points,0)
+                        pygame.display.flip()
+                        winsound.Beep(100,1000)
+                    else:
+                        winsound.Beep(500,3000)
+                        break
+                elif mouse_pos[0] <= screen_size[0]//2 and mouse_pos[1] >= screen_size[1]//2:
+                    if sequence[sequence_pos] == 1:
+                        sequence_pos += 1
+                        pygame.draw.polygon(screen,WHITE,blue_points,0)
+                        pygame.display.flip()
+                        winsound.Beep(150,1000)
+                    else:
+                        winsound.Beep(500,3000)
+                        break
+                elif mouse_pos[0] <= screen_size[0]//2 and mouse_pos[1] <= screen_size[1]//2:
+                    if sequence[sequence_pos] == 2:
+                        sequence_pos += 1
+                        pygame.draw.polygon(screen,WHITE,green_points,0)
+                        pygame.display.flip()
+                        winsound.Beep(200,1000)
+                    else:
+                        winsound.Beep(500,3000)
+                        break
+                elif mouse_pos[0] >= screen_size[0]//2 and mouse_pos[1] <= screen_size[1]//2:
+                    if sequence[sequence_pos] == 3:
+                        sequence_pos += 1
+                        pygame.draw.polygon(screen,WHITE,yellow_points,0)
+                        pygame.display.flip()
+                        winsound.Beep(250,1000)
+                    else:
+                        winsound.Beep(500,3000)
+                        break
+            else:
+                pass
+
+            if len(sequence) <= sequence_pos:
+                sequence.append(random.randint(0,4))
+                sequence_pos = 0
+                should_display = True
+
+        pygame.draw.polygon(screen,RED,red_points,0)
+        pygame.draw.polygon(screen,BLUE,blue_points,0)
+        pygame.draw.polygon(screen,GREEN,green_points,0)
+        pygame.draw.polygon(screen,YELLOW,yellow_points,0)
+
+        if should_display:
+            winsound.Beep(50,1000)
+            for i, choice in enumerate(sequence):
+                screen.fill("black")
+                pygame.draw.polygon(screen,RED,red_points,0)
+                pygame.draw.polygon(screen,BLUE,blue_points,0)
+                pygame.draw.polygon(screen,GREEN,green_points,0)
+                pygame.draw.polygon(screen,YELLOW,yellow_points,0)
+                if choice == 0:
+                    pygame.draw.polygon(screen,WHITE,red_points,0)
+                    pygame.display.flip()
+                    winsound.Beep(100,1000)
+                elif choice == 1:
+                    pygame.draw.polygon(screen,WHITE,blue_points,0)
+                    pygame.display.flip()
+                    winsound.Beep(150,1000)
+                elif choice == 2:
+                    pygame.draw.polygon(screen,WHITE,green_points,0)
+                    pygame.display.flip()
+                    winsound.Beep(200,1000)
+                elif choice == 3:
+                    pygame.draw.polygon(screen,WHITE,yellow_points,0)
+                    pygame.display.flip()
+                    winsound.Beep(250,1000)
+            should_display = False
 
         
         
